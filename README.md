@@ -1,16 +1,20 @@
-# <h1 align="center"> DappTools Template </h1>
+# <h1 align="center"> Multi-Sig-Wallet </h1>
 
-**Template repository for getting started quickly with DappTools**
+**A multi-sig-wallet with support for member management with NFTs**
 
-![Github Actions](https://github.com/gakonst/dapptools-template/workflows/Tests/badge.svg)
+## Built upon
+
+https://github.com/gakonst/dapptools-template
+https://solidity-by-example.org/app/multi-sig-wallet/
 
 ## Building and testing
 
 ```sh
-git clone https://github.com/gakonst/dapptools-template
-cd dapptools-template
+git clone https://github.com/0xfa1z/multi-sig-wallet
+cd multi-sig-wallet
 make # This installs the project's dependencies.
-make test
+make fork
+make testm
 ```
 
 ## Deploying

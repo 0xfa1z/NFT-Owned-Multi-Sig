@@ -15,9 +15,13 @@ npm:; yarn install
 SOLC_VERSION := 0_8_7
 solc:; nix-env -f https://github.com/dapphub/dapptools/archive/master.tar.gz -iA solc-static-versions.solc_${SOLC_VERSION}
 
+# for mainnet fork
+fork   :; dapp testnet --rpc
+
 # Build & test
 build  :; dapp build
 test   :; dapp test # --ffi # enable if you need the `ffi` cheat code on HEVM
+testm  :; dapp test --rpc http://127.0.0.1:8545 --verbosity 3 # testing on mainnet fork
 clean  :; dapp clean
 lint   :; yarn run lint
 estimate :; ./scripts/estimate-gas.sh ${contract}

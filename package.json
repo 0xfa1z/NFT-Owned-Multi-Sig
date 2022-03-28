@@ -1,9 +1,9 @@
 {
-  "name": "dapptools-template",
-  "author": "Georgios Konstantopoulos",
+  "name": "multi-sig-wallet",
+  "author": "Sofian Faiz",
   "license": "Unlicense",
   "version": "1.0.0",
-  "description": "A template for building dapptools projects",
+  "description": "A multi-sig-wallet with support for member management with NFTs",
   "files": [
     "*.sol"
   ],
