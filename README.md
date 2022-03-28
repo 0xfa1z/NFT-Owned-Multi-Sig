@@ -1,6 +1,6 @@
 # <h1 align="center"> Multi-Sig-Wallet </h1>
 
-**A multi-sig-wallet with support for member management with NFTs**
+**A multi-sig-wallet supporting member management with NFTs**
 
 ## Built upon
 
