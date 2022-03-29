@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+/*
+*/
+
 contract MSWallet {
     event Deposit(address sender, uint amount, uint balance);
     event TxProposal(
@@ -82,8 +85,8 @@ contract MSWallet {
         emit Deposit(msg.sender, msg.value, address(this).balance);
     }
 
-    function propose(address _to, uint _value, bytes memory _data, address _from) public 
-        onlyMember(_from) 
+    function propose(address _to, uint _value, bytes memory _data, address _from) public // remove _from
+        onlyMember(_from) // replace _from with msg.sender
     {
         transactions.push(
             Transaction({
@@ -98,8 +101,8 @@ contract MSWallet {
         emit TxProposal(_from, transactions.length-1, _to, _value, _data);
     }
 
-    function sign(uint256 _txIndex, address _from) public 
-        onlyMember(_from) 
+    function sign(uint256 _txIndex, address _from) public // remove _from
+        onlyMember(_from) // replace _from with msg.sender
         txExists(_txIndex) 
         notSigned(msg.sender, _txIndex) 
     {
@@ -109,8 +112,8 @@ contract MSWallet {
         emit Sign(_from, _txIndex);
     }
 
-    function unsign(uint256 _txIndex, address _from) public 
-        onlyMember(_from) 
+    function unsign(uint256 _txIndex, address _from) public // remove _from
+        onlyMember(_from) // replace _from with msg.sender
         txExists(_txIndex) 
     {
         require(isSigned[_txIndex][msg.sender], "Transaction not signed");
@@ -121,8 +124,8 @@ contract MSWallet {
         emit Unsign(_from, _txIndex);
     }
 
-    function execute(uint256 _txIndex, address _from) public 
-        onlyMember(_from) 
+    function execute(uint256 _txIndex, address _from) public // remove _from
+        onlyMember(_from) // replace _from with msg.sender
         txExists(_txIndex) 
         txReady(_txIndex) 
     {
