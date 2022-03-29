@@ -25,7 +25,7 @@ contract MSWalletTest is DSTest {
         emit log_named_uint("InitialBalance", address(multiSig).balance);
     }
 
-    function test_full() public {
+    function est_full() public {
         MSUser user2 = new MSUser(multiSig);
         multiSig.propose(address(recipient), 2, "", member);
         multiSig.propose(address(recipient), 5, "", member);
@@ -39,7 +39,7 @@ contract MSWalletTest is DSTest {
         emit log_named_uint("TransactionCount", multiSig.getTransactionCount());
     }
 
-    function testFail_full() public {
+    function estFail_full() public {
         multiSig.propose(address(recipient), 2, "", member);
         multiSig.propose(address(recipient), 5, "", member);
         user.sign(0, member);
