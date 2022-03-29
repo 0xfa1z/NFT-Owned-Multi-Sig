@@ -1,6 +1,6 @@
 # <h1 align="center"> Multi-Sig-Wallet </h1>
 
-**A multi-sig-wallet supporting member management with NFTs (For now just CryptoPunks, no Standard supported)**
+**A multi-sig-wallet supporting member management with NFTs (For now just CryptoPunks, no Standard supported... yet)**
 
 ## Built upon
 
