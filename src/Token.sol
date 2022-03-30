@@ -15,8 +15,8 @@ contract Token is ERC1155 {
         maxGovTokens = _maxGovTokens;
     }
 
-    function mint() public {
-        if(!allMinted && numMinted < 3) {
+    function mint() public{
+        if(!allMinted && numMinted < maxGovTokens) {
             _mint(msg.sender, GOV, 1, "");
             numMinted++;
         }

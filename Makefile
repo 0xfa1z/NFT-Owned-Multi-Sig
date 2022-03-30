@@ -21,6 +21,7 @@ fork   :; dapp testnet --rpc
 # Build & test
 build  :; dapp build
 test   :; dapp test # --ffi # enable if you need the `ffi` cheat code on HEVM
+testv  :; dapp test --verbosity 3
 testm  :; dapp test --rpc http://127.0.0.1:8545 --verbosity 3 # testing on mainnet fork
 clean  :; dapp clean
 lint   :; yarn run lint

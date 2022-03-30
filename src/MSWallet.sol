@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-/*
-*/
+interface GovToken {
+    function mint() external;
+    function balanceOf(address, uint256) external returns (uint256);
+}
 
 contract MSWallet {
     event Deposit(address sender, uint amount, uint balance);
@@ -17,7 +19,8 @@ contract MSWallet {
     event Unsign(address member, uint txIndex);
     event Execute(address member, uint txIndex);
 
-    address public collection;
+    GovToken gt;
+    uint256 private id;
     uint8 public numSigsRequired;
 
     struct Transaction {
@@ -33,16 +36,8 @@ contract MSWallet {
 
     Transaction[] public transactions;
 
-    modifier onlyMember(address addr) {
-        uint x;
-        (bool success, bytes memory data) = collection.call{gas: 1000000}(
-            abi.encodeWithSignature("balanceOf(address)", addr)
-        ); 
-        require (success == true, "could not verify member");
-        assembly {
-            x := mload(add(data, 0x20))
-        }
-        require(x > 0, "is not member");
+    modifier onlyMember(address user) {
+        require (gt.balanceOf(user, id) > 0, "is not member");
         _;
     }
 
@@ -64,29 +59,20 @@ contract MSWallet {
         _;
     }
 
-    constructor (address _collection, uint8 _numSigsRequired) {
+    constructor (address _token, uint256 _id, uint8 _numSigsRequired) {
         require (_numSigsRequired > 0, "invalid number of required signitures");
-
-        uint x;
-        (bool success, bytes memory data) = collection.call{gas: 1000000}(
-            abi.encodeWithSignature("totalSupply()")
-        );
-        require (success == true, "could not check total supply");
-        assembly {
-            x := mload(add(data, 0x20))
-        }
-        require(_numSigsRequired < x, "invalid number of required signitures");
-
+        
+        id = _id;
+        gt = GovToken(_token);
         numSigsRequired = _numSigsRequired;
-        collection = _collection;
     }
 
     receive() external payable {
         emit Deposit(msg.sender, msg.value, address(this).balance);
     }
 
-    function propose(address _to, uint _value, bytes memory _data, address _from) public // remove _from
-        onlyMember(_from) // replace _from with msg.sender
+    function proposeTx(address _to, uint _value, bytes memory _data) public
+        onlyMember(msg.sender)
     {
         transactions.push(
             Transaction({
@@ -98,22 +84,22 @@ contract MSWallet {
             })
         );
 
-        emit TxProposal(_from, transactions.length-1, _to, _value, _data);
+        emit TxProposal(msg.sender, transactions.length-1, _to, _value, _data);
     }
 
-    function sign(uint256 _txIndex, address _from) public // remove _from
-        onlyMember(_from) // replace _from with msg.sender
+    function sign(uint256 _txIndex) public
+        onlyMember(msg.sender)
         txExists(_txIndex) 
         notSigned(msg.sender, _txIndex) 
     {
         transactions[_txIndex].numSignitures++;
         isSigned[_txIndex][msg.sender] = true;
 
-        emit Sign(_from, _txIndex);
+        emit Sign(msg.sender, _txIndex);
     }
 
-    function unsign(uint256 _txIndex, address _from) public // remove _from
-        onlyMember(_from) // replace _from with msg.sender
+    function unsign(uint256 _txIndex) public
+        onlyMember(msg.sender)
         txExists(_txIndex) 
     {
         require(isSigned[_txIndex][msg.sender], "Transaction not signed");
@@ -121,11 +107,11 @@ contract MSWallet {
         transactions[_txIndex].numSignitures -= 1;
         isSigned[_txIndex][msg.sender] = false;
 
-        emit Unsign(_from, _txIndex);
+        emit Unsign(msg.sender, _txIndex);
     }
 
-    function execute(uint256 _txIndex, address _from) public // remove _from
-        onlyMember(_from) // replace _from with msg.sender
+    function execute(uint256 _txIndex) public
+        onlyMember(msg.sender)
         txExists(_txIndex) 
         txReady(_txIndex) 
     {
@@ -137,7 +123,7 @@ contract MSWallet {
         );
         require(success, "tx failed");
 
-        emit Execute(_from, _txIndex);
+        emit Execute(msg.sender, _txIndex);
     }
 
     function getTransactionCount() public view returns (uint) {
