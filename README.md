@@ -13,8 +13,7 @@
 git clone https://github.com/0xfa1z/multi-sig-wallet
 cd multi-sig-wallet
 make # This installs the project's dependencies.
-make fork
-make testm
+make test
 ```
 
 ## Installing the toolkit
