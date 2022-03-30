@@ -46,6 +46,16 @@ contract MSWalletTest is DSTest {
         user1.execute(0);
     }
 
+    function testFail_govTokenDistribution() public {
+        user1.mint(token);
+        user2.mint(token);
+
+        user1.proposeTx(address(recipient), 2, "");
+        user1.sign(0);
+        user3.sign(0);
+        user1.execute(0);
+    }
+
     function printBalance() public {
         emit log_string("----PRINTBALANCE----");
         emit log_named_uint("creator", token.balanceOf(creator, 0));
