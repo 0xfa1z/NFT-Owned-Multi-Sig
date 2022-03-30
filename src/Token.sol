@@ -5,20 +5,20 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 contract Token is ERC1155 {
     address public creator;
+    uint8 public maxGovTokens;
+    uint8 public numMinted = 0;
+    bool public allMinted = false;
+    uint256 public constant GOV = 0;
 
-    uint256 public constant GOLD = 0;
-    uint256 public constant SILVER = 1;
-    uint256 public constant THORS_HAMMER = 2;
-    uint256 public constant SWORD = 3;
-    uint256 public constant SHIELD = 4;
-
-    constructor() ERC1155("") {
-        _mint(msg.sender, GOLD, 10**18, "");
-        _mint(msg.sender, SILVER, 10**27, "");
-        _mint(msg.sender, THORS_HAMMER, 1, "");
-        _mint(msg.sender, SWORD, 10**9, "");
-        _mint(msg.sender, SHIELD, 10**9, "");
-
+    constructor(uint8 _maxGovTokens) ERC1155("") {
         creator = msg.sender;
+        maxGovTokens = _maxGovTokens;
+    }
+
+    function mint() public {
+        if(!allMinted && numMinted < 3) {
+            _mint(msg.sender, GOV, 1, "");
+            numMinted++;
+        }
     }
 }
