@@ -1,7 +1,6 @@
 # <h1 align="center"> NFT-Owned-Multi-Sig </h1>
 
-**A multi-sig-wallet supporting member management with NFTs 
-(For now just CryptoPunks, no Standard supported, yet. Working on support for ERC-1155.)**
+**A multi-sig-wallet supporting member management with NFTs (ERC-1155)**
 
 ## Built upon
 
