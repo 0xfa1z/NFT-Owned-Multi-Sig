@@ -1,9 +1,9 @@
 {
-  "name": "dapptools-template",
-  "author": "Georgios Konstantopoulos",
+  "name": "nft-owned-multi-sig",
+  "author": "Sofian Faiz",
   "license": "Unlicense",
   "version": "1.0.0",
-  "description": "A template for building dapptools projects",
+  "description": "A multi-sig-wallet which supports member management with NFTs",
   "files": [
     "*.sol"
   ],

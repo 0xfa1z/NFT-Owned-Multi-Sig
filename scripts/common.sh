@@ -110,38 +110,45 @@ estimate_gas() {
 
 	# get the bytecode from the compiled file
 	BYTECODE=0x$(jq -r "$PATTERN.evm.bytecode.object" out/dapp.sol.json)
+
 	# estimate gas
 	GAS=$(seth estimate --create "$BYTECODE" "$SIG" $ARGS --rpc-url "$ETH_RPC_URL")
 
-	TXPRICE_RESPONSE=$(curl -sL https://api.txprice.com/v1)
-	response=$(jq '.code' <<<"$TXPRICE_RESPONSE")
-	if [[ $response != "200" ]]; then
-		echo "Could not get gas information from ${TPUT_BOLD}txprice.com${TPUT_RESET}: https://api.txprice.com/v1"
+	# URL for gwei per gas units
+	URL=https://data-api.defipulse.com/api/v1/egs/api/ethgasAPI.json
+
+	# Factor to Calculate Eth from Price in Gwei
+	ETH=0.000000001
+
+	TXPRICE_RESPONSE=$(curl -sL $URL)
+	response=$(jq '.statusCode' <<<"$TXPRICE_RESPONSE")
+	if [[ -z $response ]]; then
+		echo "Could not get gas information from ${TPUT_BOLD}defi-pulse.com${TPUT_RESET}: $URL"
 		echo "response code: $response"
 	else
-		rapid=$(($(jq '.blockPrices[0].estimatedPrices[0].maxFeePerGas' <<<"$TXPRICE_RESPONSE")))
-		fast=$(($(jq '.blockPrices[0].estimatedPrices[1].maxFeePerGas' <<<"$TXPRICE_RESPONSE")))
-		standard=$(($(jq '.blockPrices[0].estimatedPrices[2].maxFeePerGas' <<<"$TXPRICE_RESPONSE")))
-		slow=$(($(jq '.blockPrices[0].estimatedPrices[3].maxFeePerGas' <<<"$TXPRICE_RESPONSE")))
-		basefee$(($(jq '.blockPrices[0].baseFeePerGas' <<<"$TXPRICE_RESPONSE")))
-		echo "Gas prices from ${TPUT_BOLD}txprice.com${TPUT_RESET}: https://api.txprice.com/v1"
+		rapid=$(expr $(($(jq '.fastest' <<<"$TXPRICE_RESPONSE"))) / 10)
+		fast=$(expr $(($(jq '.fast' <<<"$TXPRICE_RESPONSE"))) / 10)
+		standard=$(expr $(($(jq '.average' <<<"$TXPRICE_RESPONSE"))) / 10)
+		slow=$(expr $(($(jq '.safeLow' <<<"$TXPRICE_RESPONSE"))) / 10)
+		# basefee$(($(jq '.blockPrices[0].baseFeePerGas' <<<"$TXPRICE_RESPONSE")))
+		echo "Gas prices from defi-pulse.com: $URL"
 		echo " \
-     ${TPUT_RED}Rapid: $rapid gwei ${TPUT_RESET} \n
-     ${TPUT_YELLOW}Fast: $fast gwei \n
-     ${TPUT_BLUE}Standard: $standard gwei \n
+     ${TPUT_RED}Rapid: $rapid gwei ${TPUT_RESET}
+     ${TPUT_YELLOW}Fast: $fast gwei
+     ${TPUT_BLUE}Standard: $standard gwei
      ${TPUT_GREEN}Slow: $slow gwei${TPUT_RESET}" | column -t
 		size=$(contract_size "$NAME")
-		echo "Estimated Gas cost for deployment of $NAME: ${TPUT_BOLD}$GAS${TPUT_RESET} units of gas"
+		echo "Estimated Gas cost for deployment of $NAME: $GAS units of gas"
 		echo "Contract Size: ${size} bytes"
 		echo "Total cost for deployment:"
-		rapid_cost=$(echo "scale=5; $GAS*$rapid" | bc)
-		fast_cost=$(echo "scale=5; $GAS*$fast" | bc)
-		standard_cost=$(echo "scale=5; $GAS*$standard" | bc)
-		slow_cost=$(echo "scale=5; $GAS*$slow" | bc)
+		rapid_cost=$(echo "scale=5; $GAS*$rapid*$ETH" | bc)
+		fast_cost=$(echo "scale=5; $GAS*$fast*$ETH" | bc)
+		standard_cost=$(echo "scale=5; $GAS*$standard*$ETH" | bc)
+		slow_cost=$(echo "scale=5; $GAS*$slow*$ETH" | bc)
 		echo " \
-     ${TPUT_RED}Rapid: $rapid_cost ETH ${TPUT_RESET} \n
-     ${TPUT_YELLOW}Fast: $fast_cost ETH \n
-     ${TPUT_BLUE}Standard: $standard_cost ETH \n
+     ${TPUT_RED}Rapid: $rapid_cost ETH ${TPUT_RESET}
+     ${TPUT_YELLOW}Fast: $fast_cost ETH
+     ${TPUT_BLUE}Standard: $standard_cost ETH
      ${TPUT_GREEN}Slow: $slow_cost ETH ${TPUT_RESET}" | column -t
 	fi
 }
