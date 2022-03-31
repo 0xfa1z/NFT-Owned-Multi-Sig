@@ -49,8 +49,8 @@ contract MSWalletTest is DSTest {
     function testFail_govTokenDistribution() public {
         user1.mint(token);
         user2.mint(token);
-        //user2.mint(token);
-        //user3.mint(token);
+        user2.mint(token);
+        user3.mint(token);
 
         user1.proposeTx(address(recipient), 2, "");
         user1.sign(0);
