@@ -1,6 +1,6 @@
 # <h1 align="center"> NFT-Owned-Multi-Sig </h1>
 
-**A multi-sig-wallet supporting member management with NFTs (ERC-1155)**
+**A multi-sig-wallet which supports member management with NFTs (ERC-1155)**
 
 ## Built upon
 
@@ -10,8 +10,8 @@
 ## Building and testing
 
 ```sh
-git clone https://github.com/0xfa1z/multi-sig-wallet
-cd multi-sig-wallet
+git clone https://github.com/0xfa1z/nft-owned-multi-sig
+cd nft-owned-multi-sig
 make # This installs the project's dependencies.
 make test
 ```

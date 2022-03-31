@@ -1,9 +1,9 @@
 {
-  "name": "multi-sig-wallet",
+  "name": "nft-owned-multi-sig",
   "author": "Sofian Faiz",
   "license": "Unlicense",
   "version": "1.0.0",
-  "description": "A multi-sig-wallet with support for member management with NFTs",
+  "description": "A multi-sig-wallet which supports member management with NFTs",
   "files": [
     "*.sol"
   ],
